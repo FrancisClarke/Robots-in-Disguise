@@ -116,7 +116,7 @@ class Battle {
     }
 
     fightOne(decepticon, autobot) { //as per spec
-        if (this.specialRulesGameOver(decepticon, autobot))
+        if (this.specialRulesGameOver(decepticon, autobot) || this.everybodyDied)
             return;
         var courage = decepticon.courage - autobot.courage;
         var strength = decepticon.strength - autobot.strength;
@@ -186,7 +186,7 @@ class Battle {
         for (i = 0; i < lenA; i++)
             this.army.autobots[i].isAlive = false;
         document.getElementById("results6").innerHTML += "Everybody dies ";
-        this.everybodyDied = false;
+        this.everybodyDied = true;
     }
 
     result() {
