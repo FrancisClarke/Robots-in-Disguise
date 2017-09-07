@@ -1,5 +1,5 @@
 # Robots-in-Disguise
-Transformers game
-Everything is in the same directory.
-Click on index.html
+Transformers game<br>
+Everything is in the same directory.<br>
+Click on index.html<br>
 Unspoken Assumptions:  "Predaking" and "Optimus Prime" cannot change race
