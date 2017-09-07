@@ -161,12 +161,7 @@ class Battle {
     }
 
     specialRulesGameOver(decepticon, autobot) {
-        if (
-            //((decepticon.name == "Optimus Prime") && (autobot.name == "Optimus Prime")) ||
-            //((decepticon.name == "Predaking") && (autobot.name == "Predaking")) ||
-            //((decepticon.name == "Optimus Prime") && (autobot.name == "Predaking")) ||
-            ((decepticon.name === "Predaking") && (autobot.name === "Optimus Prime"))
-        ) { //we assume Optimus Prime can't be a Decepticon, Predaking can't be autobot
+        if ((decepticon.name === "Predaking") && (autobot.name === "Optimus Prime")) { //we assume Optimus Prime can't be a Decepticon, Predaking can't be autobot
             this.numBattles = 0;
             autobot.wins = 0;
             decepticon.wins = 0;
@@ -214,8 +209,8 @@ class Battle {
         var leader;
         var len, i;
         if (this.autobotWins < this.decepticonWins) {
-            winningTeam = "Decepticons";
-            losingTeam = "Autobots";
+            winningTeam = this.army.decepticonName;
+            losingTeam = this.army.autobotName;
             leader = this.army.decepticons.leaderName;
             len = this.army.autobots.length;
             for (i = 0; i < len; i++) {
@@ -223,8 +218,8 @@ class Battle {
                     survivors.push(this.army.autobots[i].name);
             }
         } else if (this.autobotWins > this.decepticonWins) {
-            winningTeam = "Autobots";
-            losingTeam = "Decepticons";
+            winningTeam = this.army.autobotName;
+            losingTeam = this.army.decepticonName;
             leader = this.army.autobots.leaderName;
             len = this.army.decepticons.length;
             for (i = 0; i < len; i++) {
