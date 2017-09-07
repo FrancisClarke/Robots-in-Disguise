@@ -2,7 +2,9 @@
 /*jslint browser: true */
 /* global stringToInt */
 /* global replaceAll */
-
+/*
+Both races are Robot Class
+*/
 class Robot {
     constructor(arr) {
         //name, race, strength, intelligence, speed, endurance, rank, courage, firepower, skill
@@ -34,17 +36,20 @@ class Robot {
     }
 }
 
-class Army {
+/*
+Combatans include both races
+*/
+class Combatants {
 
     constructor(autobotName, decepticonName) {
         this.decepticons = [];
-        this.decepticonWins = 0;
+        this.decepticons.wins = 0;
         this.decepticons.maxRank = 0;
         this.decepticons.leaderName = "";
         this.autobots = [];
         this.autobots.maxRank = 0;
         this.autobots.leaderName = "";
-        this.autobotWins = 0;
+        this.autobots.wins = 0;
         this.autobotName = autobotName;
         this.decepticonName = decepticonName;
     }
@@ -53,7 +58,7 @@ class Army {
         if (newRobot.isAutobot) {
             this.autobots.push(newRobot);
             if (newRobot.rank > this.autobots.maxRank) {
-                this.autobots.leaderName = newRobot.name;
+                this.autobots.leaderName = newRobot.name; //used in the results
                 this.autobots.maxRank = newRobot.rank;
             }
         } else {
@@ -65,7 +70,7 @@ class Army {
         }
     }
 
-    compareByRank(a, b) {
+    compareByRank(a, b) { //custom sort by rank to determine fight order
         if (a.rank === b.rank) {
             return 0;
         } else {
@@ -86,29 +91,31 @@ class Battle {
         this.army = army;
         this.numBattles = 0;
         this.winningTeam = "";
-        this.autobotWins = 0;
-        this.decepticonWins = 0;
+        this.army.autobots.wins = 0;
+        this.army.decepticons.wins = 0;
+        this.everybodyDied = false;
     }
 
     fightAll() {
         var lenD = this.army.decepticons.length;
         var lenA = this.army.autobots.length;
-        var battleNum = Math.min(lenD, lenA);
+        var battleNum = Math.min(lenD, lenA); // if lengths are different, excess robots don't fight
         document.getElementById("results6").innerHTML = '';
         for (var i = 0; i < battleNum; i++) {
             this.fightOne(this.army.decepticons[i], this.army.autobots[i]);
+            // record result:
             if (this.army.decepticons[i].isAlive && !this.army.autobots[i].isAlive) {
-                this.decepticonWins++;
+                this.army.decepticons.wins++;
                 document.getElementById("results6").innerHTML += this.army.decepticons[i].name + " " + this.army.decepticons[i].rating + " defeats " + this.army.autobots[i].name + " " + this.army.autobots[i].rating + "<br>";
             } else if (!this.army.decepticons[i].isAlive && this.army.autobots[i].isAlive) {
-                this.autobotWins++;
+                this.army.autobots.wins++;
                 document.getElementById("results6").innerHTML += this.army.autobots[i].name + " " + this.army.autobots[i].rating + " defeats " + this.army.decepticons[i].name + " " + this.army.decepticons[i].rating + "<br>";
 
             }
         }
     }
 
-    fightOne(decepticon, autobot) {
+    fightOne(decepticon, autobot) { //as per spec
         if (this.specialRulesGameOver(decepticon, autobot))
             return;
         var courage = decepticon.courage - autobot.courage;
@@ -117,7 +124,7 @@ class Battle {
         if (courage >= 4 && strength >= 3) {
             autobot.isAlive = false;
             document.getElementById("results6").innerHTML += "Courage/Strength win! ";
-            return; //if you run away you are a loser and eliminated
+            return; //we assume if you run away you are a loser and eliminated 
         } else if (courage <= -4 && strength <= -3) {
             decepticon.isAlive = false;
             document.getElementById("results6").innerHTML += "Courage/Strength win! ";
@@ -129,7 +136,6 @@ class Battle {
             document.getElementById("results6").innerHTML += "Skill win! ";
             return;
         } else if (skill <= -3) {
-            autobot.wins++;
             decepticon.isAlive = false;
             document.getElementById("results6").innerHTML += "Skill win! ";
             return;
@@ -143,6 +149,7 @@ class Battle {
             decepticon.isAlive = false;
             return;
         }
+        //it is a draw
         autobot.isAlive = false; //draw = both die
         decepticon.isAlive = false;
         document.getElementById("results6").innerHTML += "Draw! ";
@@ -151,23 +158,17 @@ class Battle {
     }
 
     specialRulesGameOver(decepticon, autobot) {
-        if ((decepticon.name === "Predaking") && (autobot.name === "Optimus Prime")) { //we assume Optimus Prime can't be a Decepticon, Predaking can't be autobot
-            this.numBattles = 0;
-            autobot.wins = 0;
-            decepticon.wins = 0;
+        if ((decepticon.name === "Predaking") && (autobot.name === "Optimus Prime")) { //all competitors destroyed
+            this.numBattles = 1; //an assumption, hard to know how many battles there were
             this.killAll();
             return true;
         }
-        if ((autobot.name == "Optimus Prime")) {
-            autobot.wins = 1;
-            decepticon.wins = 0; //we assume he can't be a Decepticon
+        if ((autobot.name == "Optimus Prime")) { //we assume he can't be a Decepticon
             decepticon.isAlive = false;
             document.getElementById("results6").innerHTML += "Special win ";
             //document.getElementById("results6").innerHTML += autobot.name + " defeats " + decepticon.name + "<br>";
         }
-        if ((decepticon.name == "Predaking")) {
-            decepticon.wins = 1;
-            autobot.wins = 0; //we assume he can't be an Autobot
+        if ((decepticon.name == "Predaking")) { //we assume he can't be an Autobot 
             autobot.isAlive = false;
             document.getElementById("results6").innerHTML += "Special win ";
             //document.getElementById("results6").innerHTML += decepticon.name + " defeats " + autobot.name + "<br>";
@@ -185,6 +186,7 @@ class Battle {
         for (i = 0; i < lenA; i++)
             this.army.autobots[i].isAlive = false;
         document.getElementById("results6").innerHTML += "Everybody dies ";
+        this.everybodyDied = false;
     }
 
     result() {
@@ -193,33 +195,36 @@ class Battle {
         var survivors = [];
         var leader;
         var len, i;
-        if (this.autobotWins < this.decepticonWins) {
+        if (this.army.autobots.wins < this.army.decepticons.wins) {
             winningTeam = this.army.decepticonName;
             losingTeam = this.army.autobotName;
             leader = this.army.decepticons.leaderName;
             len = this.army.autobots.length;
-            for (i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) { //Autobot survivors
                 if (this.army.autobots[i].isAlive)
                     survivors.push(this.army.autobots[i].name);
             }
-        } else if (this.autobotWins > this.decepticonWins) {
+        } else if (this.army.autobots.wins > this.army.decepticons.wins) {
             winningTeam = this.army.autobotName;
             losingTeam = this.army.decepticonName;
             leader = this.army.autobots.leaderName;
             len = this.army.decepticons.length;
-            for (i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) { //Decepticon survivors
                 if (this.army.decepticons[i].isAlive)
                     survivors.push(this.army.decepticons[i].name);
             }
 
         } else {
             winningTeam = "None";
-            if (this.decepticonWins > 0) {
+            if (this.army.decepticons.wins > 0) { //score draw
                 leader = "Draw";
                 losingTeam = "No Losers";
-            } else {
+            } else if (this.everybodyDied) {
                 losingTeam = "None";
                 leader = "All are destroyed";
+            } else { //no score draw
+                losingTeam = "None";
+                leader = "No Fights occurred";
             }
         }
 
@@ -251,7 +256,7 @@ function startBattle() {
     robotStringArray = robotStringArray.value.split('\n');
 
     var len = robotStringArray.length;
-    var myArmy = new Army("Autobots", "Decepticons");
+    var myCombatants = new Combatants("Autobots", "Decepticons");
 
     for (var i = 0; i < len; i++) {
         var thisRobot = robotStringArray[i];
@@ -260,11 +265,11 @@ function startBattle() {
 
         if (thisRobot.length == 10) {
             var robo = new Robot(thisRobot);
-            myArmy.add(robo);
+            myCombatants.add(robo);
         }
     }
-    myArmy.sort();
-    var myBattle = new Battle(myArmy);
+    myCombatants.sort();
+    var myBattle = new Battle(myCombatants);
     myBattle.fightAll();
     myBattle.result();
 }
