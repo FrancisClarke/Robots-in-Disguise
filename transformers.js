@@ -37,7 +37,6 @@ class Robot {
 class Army {
 
     constructor(autobotName, decepticonName) {
-        this.robots = [];
         this.decepticons = [];
         this.decepticonWins = 0;
         this.decepticons.maxRank = 0;
@@ -51,7 +50,6 @@ class Army {
     }
 
     add(newRobot) {
-        this.robots.push(newRobot);
         if (newRobot.isAutobot) {
             this.autobots.push(newRobot);
             if (newRobot.rank > this.autobots.maxRank) {
@@ -67,13 +65,6 @@ class Army {
         }
     }
 
-    orbat() {
-        var len = this.robots.length;
-        for (var i = 0; i < len; i++) {
-            window.alert(this.robots[i].name + " " + this.robots[i].rating);
-        }
-    }
-
     compareByRank(a, b) {
         if (a.rank === b.rank) {
             return 0;
@@ -83,7 +74,6 @@ class Army {
     }
 
     sort() {
-        this.robots.sort(this.compareByRank);
         this.decepticons.sort(this.compareByRank);
         this.autobots.sort(this.compareByRank);
     }
@@ -197,11 +187,6 @@ class Battle {
         document.getElementById("results6").innerHTML += "Everybody dies ";
     }
 
-    kill(array, index) {
-        if (index > -1) {
-            array[index] = false;
-        }
-    }
     result() {
         var winningTeam;
         var losingTeam;
@@ -259,31 +244,6 @@ class Battle {
         document.getElementById("results3").innerHTML = "Survivors from the losing team (" + losingTeam + ") " + survivorStr;
 
     }
-    rollCall() {
-        var i, len;
-        len = this.army.autobots.length;
-        document.getElementById("results4").innerHTML = "List of survivors<br>";
-        for (i = 0; i < len; i++) {
-            if (this.army.autobots[i].isAlive)
-                document.getElementById("results4").innerHTML += this.army.autobots[i].name + " " + this.army.autobots[i].rating + "<br>";
-        }
-        len = this.army.decepticons.length;
-        for (i = 0; i < len; i++) {
-            if (this.army.decepticons[i].isAlive)
-                document.getElementById("results4").innerHTML += this.army.decepticons[i].name + " " + this.army.decepticons[i].rating + "<br>";
-        }
-        len = this.army.autobots.length;
-        document.getElementById("results5").innerHTML = "List of losers<br>";
-        for (i = 0; i < len; i++) {
-            if (!this.army.autobots[i].isAlive)
-                document.getElementById("results4").innerHTML += this.army.autobots[i].name + " " + this.army.autobots[i].rating + "<br>";
-        }
-        len = this.army.decepticons.length;
-        for (i = 0; i < len; i++) {
-            if (!this.army.decepticons[i].isAlive)
-                document.getElementById("results5").innerHTML += this.army.decepticons[i].name + " " + this.army.decepticons[i].rating + "<br>";
-        }
-    }
 }
 
 function startBattle() {
@@ -304,11 +264,9 @@ function startBattle() {
         }
     }
     myArmy.sort();
-    //myArmy.orbat();
     var myBattle = new Battle(myArmy);
     myBattle.fightAll();
     myBattle.result();
-    // myBattle.rollCall();
 }
 
 function moreInfo() {
