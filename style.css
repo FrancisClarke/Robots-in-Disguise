@@ -13,7 +13,7 @@ h2 {
 }
 
 textarea {
-    background: #000066;
+    background: #222222;
     /*border: 1px solid black;*/
     color: white;
     font-size: 20px;
@@ -23,7 +23,7 @@ textarea {
 }
 
 body {
-    background-color: #e6e6ff;
+    background-color: #efefef;
 }
 
 p {
